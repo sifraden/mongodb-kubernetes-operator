@@ -1,0 +1,317 @@
+openapi: 3.0.0
+info:
+  title: API Documentation
+  version: 1.0.0
+paths:
+  /booking/{customer}/building/{building}/slots/{sensorId}:
+    get:
+      summary: Get availabilities for a specific customer, building, and sensor
+      parameters:
+        - name: customer
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Requested Customer
+        - name: building
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Requested Building
+        - name: sensorId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Desk Identifier
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Requested Date in format: YYYY-MM-DD
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    slots:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          startTime:
+                            type: string
+                          endTime:
+                            type: string
+        '404':
+          description: Desk not found
+      security:
+        - APIKeyHeader: []
+        - TimezoneHeader: []
+  /booking/book:
+    post:
+      summary: Book a slot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  type: string
+                customer:
+                  type: string
+                timezone:
+                  type: string
+                building:
+                  type: string
+                floor:
+                  type: integer
+                location:
+                  type: string
+                meetingRoom:
+                  type: boolean
+                anonymous:
+                  type: boolean
+                creationDate:
+                  type: string
+                  format: date
+                recurrence:
+                  type: object
+                  properties:
+                    active:
+                      type: boolean
+                    days:
+                      type: array
+                      items:
+                        type: string
+                slots:
+                  type: object
+                  properties:
+                    startTime:
+                      type: string
+                      format: time
+                    endTime:
+                      type: string
+                      format: time
+                    user:
+                      type: object
+                      properties:
+                        email:
+                          type: string
+                          format: email
+                        firstname:
+                          type: string
+                        lastname:
+                          type: string
+                    available:
+                      type: boolean
+      responses:
+        '200':
+          description: Successful booking
+      security:
+        - APIKeyHeader: []
+  /booking/cancel/{bookingId}:
+    post:
+      summary: Cancel a booking
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Booking Identifier to cancel
+      responses:
+        '200':
+          description: Booking successfully cancelled
+        '404':
+          description: Booking not found
+        '500':
+          description: Internal Error
+      security:
+        - APIKeyHeader: []
+  /booking/{customer}/email/{email}/list:
+    get:
+      summary: Get bookings for a specific customer and user's email
+      parameters:
+        - name: customer
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Requested Customer
+              - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+          description: User's email
+        - name: date
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Requested Date in format: YYYY-MM-DD
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    deviceId:
+                      type: string
+                    customer:
+                      type: string
+                    timezone:
+                      type: string
+                    building:
+                      type: string
+                    floor:
+                      type: integer
+                    location:
+                      type: string
+                    meetingRoom:
+                      type: boolean
+                    anonymous:
+                      type: boolean
+                    creationDate:
+                      type: string
+                      format: date
+                    recurrence:
+                      type: object
+                      properties:
+                        active:
+                          type: boolean
+                        days:
+                          type: array
+                          items:
+                            type: string
+                    slots:
+                      type: object
+                      properties:
+                        startTime:
+                          type: string
+                          format: time
+                        endTime:
+                          type: string
+                          format: time
+                        user:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                              format: email
+                            firstname:
+                              type: string
+                            lastname:
+                              type: string
+                        available:
+                          type: boolean
+      security:
+        - APIKeyHeader: []
+  /occupancy/sensorsStreamingStatus:
+    get:
+      summary: Streaming in real-time occupancy sensors status
+      parameters:
+        - name: customer
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Requested Customer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/event-stream:
+              schema:
+                type: string
+              example: |
+                data: {"sensorId":"abc123","type":"Occupancy","state":"occupied","timestamp":"2023-05-26T10:15:00Z","timeZone":"UTC","customer":"test","building":"building 1","floor":"1","location":"A1"}
+                data: {"sensorId":"def456","type":"Occupancy","state":"vacant","timestamp":"2023-05-26T10:16:00Z","timeZone":"UTC","customer":"test","building":"building 2","floor":"2","location":"B2"}
+        '404':
+          description: Occupancy sensors not found
+      produces:
+        - text/event-stream
+      security:
+        - APIKeyHeader: []
+  /occupancy/save:
+    post:
+      summary: Manage a device by adding/updating its attributes and mapping to a geographical position
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                sensorType:
+                  type: string
+                building:
+                  type: string
+                location:
+                  type: string
+                floor:
+                  type: string
+                email:
+                  type: string
+                customer:
+                  type: string
+                amenities:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      qte:
+                        type: integer
+                sanitized:
+                  type: boolean
+                coordinate:
+                  type: object
+                  properties:
+                    lat:
+                      type: string
+                    lng:
+                      type: string
+                meetingRoom:
+                  type: boolean
+      responses:
+        '200':
+          description: Device saved successfully
+        '500':
+          description: Internal Error
+        '503':
+          description: Service Unavailable
+      security:
+        - APIKeyHeader: []
+components:
+  securitySchemes:
+    APIKeyHeader:
+      type: apiKey
+      in: header
+      name: API-KEY
+    TimezoneHeader:
+      type: apiKey
+      in: header
+      name: X-TIMEZONE
+
