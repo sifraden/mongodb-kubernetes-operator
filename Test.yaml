@@ -151,7 +151,7 @@ paths:
           schema:
             type: string
           description: Requested Customer
-              - name: email
+        - name: email
           in: path
           required: true
           schema:
