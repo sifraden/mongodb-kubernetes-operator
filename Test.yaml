@@ -31,7 +31,7 @@ paths:
           schema:
             type: string
             format: date
-          description: Requested Date in format: YYYY-MM-DD
+          description: Requested Date in format YYYY-MM-DD
       responses:
         '200':
           description: Successful response
