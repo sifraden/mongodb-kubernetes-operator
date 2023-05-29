@@ -3,9 +3,9 @@ info:
   title: API Documentation
   version: 1.0.0
 paths:
-  /booking/{customer}/building/{building}/slots/{sensorId}:
+  '/booking/{customer}/building/{building}/slots/{sensorId}':
     get:
-      summary: Get availabilities for a specific customer, building, and sensor
+      summary: 'Get availabilities for a specific customer, building, and sensor'
       parameters:
         - name: customer
           in: path
@@ -122,7 +122,7 @@ paths:
           description: Successful booking
       security:
         - APIKeyHeader: []
-  /booking/cancel/{bookingId}:
+  '/booking/cancel/{bookingId}':
     post:
       summary: Cancel a booking
       parameters:
@@ -141,7 +141,7 @@ paths:
           description: Internal Error
       security:
         - APIKeyHeader: []
-  /booking/{customer}/email/{email}/list:
+  '/booking/{customer}/email/{email}/list':
     get:
       summary: Get bookings for a specific customer and user's email
       parameters:
@@ -163,7 +163,7 @@ paths:
           schema:
             type: string
             format: date
-          description: Requested Date in format: YYYY-MM-DD
+          description: Requested Date in format YYYY-MM-DD
       responses:
         '200':
           description: Successful response
@@ -242,9 +242,14 @@ paths:
             text/event-stream:
               schema:
                 type: string
-              example: |
-                data: {"sensorId":"abc123","type":"Occupancy","state":"occupied","timestamp":"2023-05-26T10:15:00Z","timeZone":"UTC","customer":"test","building":"building 1","floor":"1","location":"A1"}
-                data: {"sensorId":"def456","type":"Occupancy","state":"vacant","timestamp":"2023-05-26T10:16:00Z","timeZone":"UTC","customer":"test","building":"building 2","floor":"2","location":"B2"}
+              example: >
+                data:
+                {"sensorId":"abc123","type":"Occupancy","state":"occupied","timestamp":"2023-05-26T10:15:00Z","timeZone":"UTC","customer":"test","building":"building
+                1","floor":"1","location":"A1"}
+
+                data:
+                {"sensorId":"def456","type":"Occupancy","state":"vacant","timestamp":"2023-05-26T10:16:00Z","timeZone":"UTC","customer":"test","building":"building
+                2","floor":"2","location":"B2"}
         '404':
           description: Occupancy sensors not found
       produces:
@@ -253,7 +258,9 @@ paths:
         - APIKeyHeader: []
   /occupancy/save:
     post:
-      summary: Manage a device by adding/updating its attributes and mapping to a geographical position
+      summary: >-
+        Manage a device by adding/updating its attributes and mapping to a
+        geographical position
       requestBody:
         required: true
         content:
@@ -314,4 +321,3 @@ components:
       type: apiKey
       in: header
       name: X-TIMEZONE
-
