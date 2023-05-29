@@ -235,6 +235,8 @@ paths:
           schema:
             type: string
           description: Requested Customer
+      produces:
+        - text/event-stream      
       responses:
         '200':
           description: Successful response
@@ -252,8 +254,6 @@ paths:
                 2","floor":"2","location":"B2"}
         '404':
           description: Occupancy sensors not found
-      produces:
-        - text/event-stream
       security:
         - APIKeyHeader: []
   /occupancy/save:
